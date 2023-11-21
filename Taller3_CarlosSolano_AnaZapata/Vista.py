@@ -1,6 +1,6 @@
 
 # Importar librerias básicas
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QIntValidator, QRegExpValidator
 from PyQt5.QtCore import Qt,QRegExp
@@ -63,6 +63,7 @@ class Vista2(QDialog):
     def setup(self):
         #se programa la senal para el boton
         self.BotonSalir.clicked.connect(self.accionSalir)
+        self.cargar.clicked.connect(self.cargarSenal)
 
     def asignarControlador(self,c):
         self.__controlador = c
@@ -71,6 +72,10 @@ class Vista2(QDialog):
         print("Boton presionado Salir")
         self.hide()
         self.__ventanaPadre.show()
+
+    def cargarSenal(self):
+        archivo_cargado, _ = QFileDialog.getOpenFileName(self, "Abrir señal","","Archivos comprimidos (*.zip),Todos los archivos (*)")
+        
         
 
 

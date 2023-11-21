@@ -154,6 +154,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
     </widget>
     <widget class="QPushButton" name="boton_ingresar">
      <property name="geometry">
