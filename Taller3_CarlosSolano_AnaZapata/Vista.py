@@ -1,10 +1,13 @@
 
 # Importar librerias básicas
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog,QSlider,QVBoxLayout,QLabel,QWidget
 from PyQt5.uic import loadUi
-from PyQt5.QtGui import QIntValidator, QRegExpValidator
+from PyQt5.QtGui import QIntValidator, QRegExpValidator, QPixmap
 from PyQt5.QtCore import Qt,QRegExp
 import sys
+import pydicom
+import rarfile
+import os
 
 class VentanaPrincipal(QMainWindow):
     #constructor
@@ -74,10 +77,36 @@ class Vista2(QDialog):
         self.__ventanaPadre.show()
 
     def cargarSenal(self):
-        archivo_cargado, _ = QFileDialog.getOpenFileName(self, "Abrir señal","","Archivos comprimidos (*.zip),Todos los archivos (*)")
-        
-        
+        archivoCargado = QFileDialog.getOpenFileName(self, "Abrir señal","","Archivos comprimidos (*.rar),Todos los archivos (*)")
+        # Obtener el primer elemento de la tupla que es el nombre del archivo
+        archivoCargado = archivoCargado[0]
 
+        # Verificar si se seleccionó un archivo y si termina con ".rar" o ".zip"
+        if archivoCargado and (archivoCargado.endswith(".rar") or archivoCargado.endswith(".zip")):
+            # Aquí puedes realizar las acciones que necesitas con el archivo cargado
+            print(f"Archivo cargado exitosamente!!!")
 
-        
+            with rarfile.RarFile(archivoCargado, 'r') as rar_ref:
+                listaArchivosNombres = rar_ref.namelist()
+
+                archivosDicom = []
+
+                for nombre_archivo in listaArchivosNombres:
+                    # Leer el contenido del archivo DICOM
+                    with rar_ref.open(nombre_archivo) as archivo_dicom:
+                        dicom_object = pydicom.dcmread(archivo_dicom)
+                        archivosDicom.append(dicom_object)
+
+            return archivosDicom
+
+        else:
+            print("Formato no válido.")
+
+            msg = QMessageBox(self)
+            msg.setIcon(QMessageBox.Information)
+            msg.setWindowTitle("Resultado")
+            msg.setText("Archivo no valido")
+            msg.show()
+            
+        print (archivosDicom)
         

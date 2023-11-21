@@ -29,8 +29,8 @@ class Principal(object):
 
 #se crean los objetos para la ejecucion    
 p = Principal()
-p.main()   
-    
+p.main() 
+
     
     
     
