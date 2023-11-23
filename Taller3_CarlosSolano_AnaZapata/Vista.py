@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFi
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QIntValidator, QRegExpValidator, QPixmap
 from PyQt5.QtCore import Qt,QRegExp
+import matplotlib.pyplot as plt
 import sys
 import pydicom
 import rarfile
@@ -81,23 +82,31 @@ class Vista2(QDialog):
         # Obtener el primer elemento de la tupla que es el nombre del archivo
         archivoCargado = archivoCargado[0]
 
+        
+
         # Verificar si se seleccionó un archivo y si termina con ".rar" o ".zip"
         if archivoCargado and (archivoCargado.endswith(".rar") or archivoCargado.endswith(".zip")):
             # Aquí puedes realizar las acciones que necesitas con el archivo cargado
             print(f"Archivo cargado exitosamente!!!")
 
-            with rarfile.RarFile(archivoCargado, 'r') as rar_ref:
+            with rarfile.RarFile(archivoCargado) as rar_ref:
                 listaArchivosNombres = rar_ref.namelist()
 
-                archivosDicom = []
+                visualizar = listaArchivosNombres[0]
 
-                for nombre_archivo in listaArchivosNombres:
-                    # Leer el contenido del archivo DICOM
-                    with rar_ref.open(nombre_archivo) as archivo_dicom:
-                        dicom_object = pydicom.dcmread(archivo_dicom)
-                        archivosDicom.append(dicom_object)
+                nombre_archivo_sin_extension = os.path.splitext(os.path.basename(archivoCargado))[0]
 
-            return archivosDicom
+                # Crear un directorio para extraer el contenido del RAR
+                directorio_destino = os.path.join(os.path.dirname(archivoCargado), nombre_archivo_sin_extension)
+                os.makedirs(directorio_destino, exist_ok=True)
+
+                # Extraer el contenido en el directorio creado
+                rar_ref.extract(visualizar, directorio_destino)
+
+                # Graficar el contenido del archivo DICOM
+                plt.imshow(visualizar.pixel_array, cmap=plt.cm.bone)
+                plt.title(f"Imagen DICOM: {visualizar}")
+                plt.show()
 
         else:
             print("Formato no válido.")
@@ -108,5 +117,5 @@ class Vista2(QDialog):
             msg.setText("Archivo no valido")
             msg.show()
             
-        print (archivosDicom)
+        print (listaArchivosNombres[0])
         
