@@ -78,35 +78,14 @@ class Vista2(QDialog):
         self.__ventanaPadre.show()
 
     def cargarSenal(self):
-        archivoCargado = QFileDialog.getOpenFileName(self, "Abrir señal","","Archivos comprimidos (*.rar),Todos los archivos (*)")
-        # Obtener el primer elemento de la tupla que es el nombre del archivo
-        archivoCargado = archivoCargado[0]
+        ruta_carpeta = QFileDialog.getExistingDirectory(self, 'Seleccionar Carpeta', '/')
 
-        
+        archivos_en_carpeta = os.listdir(ruta_carpeta)
+        todos_dcm = all(archivo.endswith(".dcm") for archivo in archivos_en_carpeta)
 
-        # Verificar si se seleccionó un archivo y si termina con ".rar" o ".zip"
-        if archivoCargado and (archivoCargado.endswith(".rar") or archivoCargado.endswith(".zip")):
-            # Aquí puedes realizar las acciones que necesitas con el archivo cargado
+        if todos_dcm:
             print(f"Archivo cargado exitosamente!!!")
-
-            with rarfile.RarFile(archivoCargado) as rar_ref:
-                listaArchivosNombres = rar_ref.namelist()
-
-                visualizar = listaArchivosNombres[0]
-
-                nombre_archivo_sin_extension = os.path.splitext(os.path.basename(archivoCargado))[0]
-
-                # Crear un directorio para extraer el contenido del RAR
-                directorio_destino = os.path.join(os.path.dirname(archivoCargado), nombre_archivo_sin_extension)
-                os.makedirs(directorio_destino, exist_ok=True)
-
-                # Extraer el contenido en el directorio creado
-                rar_ref.extract(visualizar, directorio_destino)
-
-                # Graficar el contenido del archivo DICOM
-                plt.imshow(visualizar.pixel_array, cmap=plt.cm.bone)
-                plt.title(f"Imagen DICOM: {visualizar}")
-                plt.show()
+            
 
         else:
             print("Formato no válido.")
@@ -116,6 +95,18 @@ class Vista2(QDialog):
             msg.setWindowTitle("Resultado")
             msg.setText("Archivo no valido")
             msg.show()
-            
-        print (listaArchivosNombres[0])
+
+
+
+    def obtener_primera_imagen_dicom(self, ruta_carpeta):
+        archivos_dicom = [archivo for archivo in os.listdir(ruta_carpeta) if archivo.endswith(".dcm")]
+        if archivos_dicom:
+            ruta_primera_imagen = os.path.join(ruta_carpeta, archivos_dicom[0])
+            imagen_dicom = pydicom.dcmread(ruta_primera_imagen).pixel_array
+            print(imagen_dicom)
+            return imagen_dicom
         
+        else:
+            return None
+
+    
