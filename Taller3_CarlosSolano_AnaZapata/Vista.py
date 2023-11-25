@@ -28,7 +28,7 @@ class VentanaPrincipal(QMainWindow):
         self.__controlador = c
 
     def accion_ingresar(self):
-        print("Boton presionado")
+        #print("Boton presionado")
         usuario = self.campo_usuario.text()
         password = self.campo_password.text()
         #esta informacion la debemos pasar al controlador
@@ -118,5 +118,5 @@ class Vista2(QDialog):
         self.nombre.setText(f"{info_paciente['PatientName']}")
         self.id.setText(f"{info_paciente['PatientID']}")
         self.partecuerpo.setText(f"{info_paciente['BodyPartExamined']}")
-        self.label_2.setText(f"{info_paciente['StudyDescription']}")
+        self.estudio.setText(f"{info_paciente['StudyDescription']}")
         self.fecha.setText(f"{fecha_estudio}")

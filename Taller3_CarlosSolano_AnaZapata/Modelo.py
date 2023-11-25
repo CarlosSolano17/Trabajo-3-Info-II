@@ -62,7 +62,6 @@ class Servicio(object):
             "StudyDescription": str(ds.StudyDescription),
             "StudyDate": str(ds.StudyDate),
         }
-
         return informacion_paciente
     
     
