@@ -271,7 +271,7 @@
     <string notr="true">background-color: rgb(232, 247, 242);</string>
    </property>
    <property name="text">
-    <string>Cargar Imagen </string>
+    <string>Cargar Carpeta </string>
    </property>
   </widget>
   <widget class="QPushButton" name="BotonSalir">
@@ -314,39 +314,7 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QFrame" name="frame">
-   <property name="geometry">
-    <rect>
-     <x>870</x>
-     <y>270</y>
-     <width>621</width>
-     <height>471</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(224, 226, 239);</string>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::StyledPanel</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Raised</enum>
-   </property>
-   <widget class="QLabel" name="img">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>20</y>
-      <width>561</width>
-      <height>431</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QSlider" name="horizontalSlider">
+  <widget class="QSlider" name="slider">
    <property name="geometry">
     <rect>
      <x>870</x>
@@ -378,23 +346,32 @@
     <bool>true</bool>
    </property>
   </widget>
-  <zorder>frame</zorder>
-  <zorder>label</zorder>
-  <zorder>label_3</zorder>
-  <zorder>label_4</zorder>
-  <zorder>label_5</zorder>
-  <zorder>label_6</zorder>
-  <zorder>label_7</zorder>
-  <zorder>nombre</zorder>
-  <zorder>id</zorder>
-  <zorder>fecha</zorder>
-  <zorder>estudio</zorder>
-  <zorder>partecuerpo</zorder>
-  <zorder>cargar</zorder>
-  <zorder>BotonSalir</zorder>
-  <zorder>label_13</zorder>
-  <zorder>horizontalSlider</zorder>
-  <zorder>label_2</zorder>
+  <widget class="QLabel" name="nums">
+   <property name="geometry">
+    <rect>
+     <x>780</x>
+     <y>810</y>
+     <width>49</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="img">
+   <property name="geometry">
+    <rect>
+     <x>860</x>
+     <y>280</y>
+     <width>641</width>
+     <height>471</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

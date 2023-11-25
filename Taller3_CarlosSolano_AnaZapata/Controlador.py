@@ -9,9 +9,18 @@ class Coordinador(object):
     def __init__(self, vista, sistema):
         self.__mi_vista = vista
         self.__mi_sistema = sistema
+       # self.imagenes_dicom = []
+
     def validar_usuario(self, u, p):
         return self.__mi_sistema.verificarUsuario(u,p)
     
+    def cargar_senal_desde_carpeta(self,ruta_carpeta):
+        return self.__mi_sistema.cargar_senal(ruta_carpeta)
+    
+    def cargar_dicom(self,x):
+        return self.__mi_sistema.R_dicom(x)
+    
+
 #Esta clase no cambia ya que en esta simplemente se hacen las conexiones que siempre van
 class Principal(object):
     def __init__(self):

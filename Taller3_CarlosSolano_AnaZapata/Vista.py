@@ -4,11 +4,12 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFi
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QIntValidator, QRegExpValidator, QPixmap
 from PyQt5.QtCore import Qt,QRegExp
-import matplotlib.pyplot as plt
+from PyQt5.QtGui import QImage
 import sys
 import pydicom
 import rarfile
 import os
+
 
 class VentanaPrincipal(QMainWindow):
     #constructor
@@ -22,7 +23,7 @@ class VentanaPrincipal(QMainWindow):
         #se programa la senal para el boton
         self.boton_ingresar.clicked.connect(self.accion_ingresar)
 
-
+        
     def asignarControlador(self,c):
         self.__controlador = c
 
@@ -30,10 +31,8 @@ class VentanaPrincipal(QMainWindow):
         print("Boton presionado")
         usuario = self.campo_usuario.text()
         password = self.campo_password.text()
-
         #esta informacion la debemos pasar al controlador
         resultado = self.__controlador.validar_usuario(usuario,password)
-
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("Resultado")
@@ -52,15 +51,16 @@ class VentanaPrincipal(QMainWindow):
         self.campo_usuario.clear()
         self.campo_password.clear()
         ventana_ingreso=Vista2(self)
+        ventana_ingreso.asignarControlador(self.__controlador)
         self.hide()
         ventana_ingreso.show()
-
 
 class Vista2(QDialog):
     def __init__(self, ppal=None):
         super().__init__(ppal)
         loadUi("Vista2.ui",self)
         self.__ventanaPadre = ppal
+        self.__resultado_lista = []
         self.setup()
 
     #metodo para configurar las senales-slots y otros de la interfaz
@@ -68,6 +68,7 @@ class Vista2(QDialog):
         #se programa la senal para el boton
         self.BotonSalir.clicked.connect(self.accionSalir)
         self.cargar.clicked.connect(self.cargarSenal)
+        self.slider.valueChanged.connect(self.actualizar_slider)
 
     def asignarControlador(self,c):
         self.__controlador = c
@@ -77,36 +78,37 @@ class Vista2(QDialog):
         self.hide()
         self.__ventanaPadre.show()
 
+    #Se le pide al usuario que ingrese una carpeta y esta verifica que todos los datos de la carpeta sean archivos .dcm 
     def cargarSenal(self):
         ruta_carpeta = QFileDialog.getExistingDirectory(self, 'Seleccionar Carpeta', '/')
-
-        archivos_en_carpeta = os.listdir(ruta_carpeta)
-        todos_dcm = all(archivo.endswith(".dcm") for archivo in archivos_en_carpeta)
-
-        if todos_dcm:
-            print(f"Archivo cargado exitosamente!!!")
-            
-
-        else:
-            print("Formato no válido.")
-
-            msg = QMessageBox(self)
-            msg.setIcon(QMessageBox.Information)
-            msg.setWindowTitle("Resultado")
-            msg.setText("Archivo no valido")
-            msg.show()
-
-
-
-    def obtener_primera_imagen_dicom(self, ruta_carpeta):
-        archivos_dicom = [archivo for archivo in os.listdir(ruta_carpeta) if archivo.endswith(".dcm")]
-        if archivos_dicom:
-            ruta_primera_imagen = os.path.join(ruta_carpeta, archivos_dicom[0])
-            imagen_dicom = pydicom.dcmread(ruta_primera_imagen).pixel_array
-            print(imagen_dicom)
-            return imagen_dicom
-        
-        else:
-            return None
-
+        self.__resultado_lista = self.__controlador.cargar_senal_desde_carpeta(ruta_carpeta)
+        self.configurar_rango_slider()
+        return ruta_carpeta
     
+    #El rango del slider va a hacer :el len de la carpeta con los archivos .dcm y va pasando uno por uno 
+    def configurar_rango_slider(self):
+        num_elementos = len(self.__resultado_lista)
+        self.slider.setRange(0, num_elementos - 1)
+        self.slider.setSingleStep(1)
+
+    # Muestra en la vista el numero de la imagen cuando el slider va pasando 
+    def actualizar_slider(self,value):
+      self.nums.setText(str(value))
+      self.cargar_imagen()
+
+    def cargar_imagen(self):
+        x = int(self.slider.value())
+        x = self.__resultado_lista[x]
+        y= self.__controlador.cargar_dicom(x)
+        self.mostrar_imagen_en_label(y)
+
+    # Mostrar la imagen en el QLabel llamado 'img'
+    def mostrar_imagen_en_label(self, imagen_qt):
+        pixmap = QPixmap.fromImage(imagen_qt)
+        self.img.setScaledContents(True)
+        self.img.setPixmap(pixmap)
+ 
+
+
+
+
