@@ -7,8 +7,8 @@ from PyQt5.QtCore import Qt,QRegExp
 from PyQt5.QtGui import QImage
 import sys
 import pydicom
-import rarfile
 import os
+import datetime 
 
 
 class VentanaPrincipal(QMainWindow):
@@ -74,7 +74,7 @@ class Vista2(QDialog):
         self.__controlador = c
 
     def accionSalir(self):
-        print("Boton presionado Salir")
+        #print("Boton presionado Salir")
         self.hide()
         self.__ventanaPadre.show()
 
@@ -95,6 +95,7 @@ class Vista2(QDialog):
     def actualizar_slider(self,value):
       self.nums.setText(str(value))
       self.cargar_imagen()
+      self.mostrar_informacion_paciente()
 
     def cargar_imagen(self):
         x = int(self.slider.value())
@@ -107,8 +108,15 @@ class Vista2(QDialog):
         pixmap = QPixmap.fromImage(imagen_qt)
         self.img.setScaledContents(True)
         self.img.setPixmap(pixmap)
- 
+    
 
-
-
-
+    def mostrar_informacion_paciente(self):
+        x = int(self.slider.value())
+        x = self.__resultado_lista[x]
+        info_paciente = self.__controlador.extraerInfo(x)
+        fecha_estudio = datetime.datetime.strptime(info_paciente['StudyDate'], '%Y%m%d').strftime('%d-%m-%Y')
+        self.nombre.setText(f"{info_paciente['PatientName']}")
+        self.id.setText(f"{info_paciente['PatientID']}")
+        self.partecuerpo.setText(f"{info_paciente['BodyPartExamined']}")
+        self.label_2.setText(f"{info_paciente['StudyDescription']}")
+        self.fecha.setText(f"{fecha_estudio}")

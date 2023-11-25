@@ -48,6 +48,25 @@ class Servicio(object):
         altura, ancho = matriz.shape
         imagen_qt = QImage(matriz.data, ancho, altura, ancho, QImage.Format_Grayscale8)
         return imagen_qt
+    
+
+    def obtener_informacion_paciente(self, x):
+        # Leer el archivo DICOM
+        ds = pydicom.dcmread(x)
+
+        # Extraer información del paciente
+        informacion_paciente = {
+            "PatientName": str(ds.PatientName),
+            "PatientID": str(ds.PatientID),
+            "BodyPartExamined": str(ds.BodyPartExamined),
+            "StudyDescription": str(ds.StudyDescription),
+            "StudyDate": str(ds.StudyDate),
+        }
+
+        return informacion_paciente
+    
+    
+
 
     
 

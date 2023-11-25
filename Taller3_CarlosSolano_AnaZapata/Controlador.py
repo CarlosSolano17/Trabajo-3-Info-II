@@ -20,13 +20,16 @@ class Coordinador(object):
     def cargar_dicom(self,x):
         return self.__mi_sistema.R_dicom(x)
     
+    def extraerInfo(self,x):
+        return self.__mi_sistema.obtener_informacion_paciente(x)
+    
 
 #Esta clase no cambia ya que en esta simplemente se hacen las conexiones que siempre van
 class Principal(object):
     def __init__(self):
         self.__app = QApplication(sys.argv)
         self.__mi_vista = VentanaPrincipal()
-        self.__mi_sistema = Servicio()
+        self.__mi_sistema = Servicio()  
         #hacemos enlaces entre las partes
         self.__mi_coordinador = Coordinador(self.__mi_vista, self.__mi_sistema)
         self.__mi_vista.asignarControlador(self.__mi_coordinador)
